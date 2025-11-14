@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Facebook - Se connecter (demo)</title>
+  <style>
+    :root{
+      --bg:#f0f2f5; --fb:#1877f2; --green:#42b72a; --card:#fff;
+      --muted:#65676b; --max:460px;
+      --radius:8px;
+    }
+    html,body{height:100%;margin:0;font-family:Helvetica,Arial,sans-serif;background:var(--bg);color:#050505}
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:28px;
+      padding:28px 16px;
+      box-sizing:border-box;
+    }
+
+    /* Card */
+    .card{
+      width:100%;
+      max-width:var(--max);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:0 6px 20px rgba(0,0,0,0.08);
+      padding:18px;
+      box-sizing:border-box;
+      text-align:center;
+    }
+    .brand{ margin: -28px 0 8px; display:flex; justify-content:center; }
+    .brand img{ width:160px; height:auto; display:block; }
+
+    .card h1{ font-size:16px; margin:4px 0 12px; color:#1d2129; font-weight:600; }
+
+    form{ display:flex; flex-direction:column; gap:10px; align-items:stretch; }
+
+    input[type="text"], input[type="password"], input[type="email"]{
+      padding:12px 14px; border:1px solid #dfe3e6; border-radius:6px; font-size:15px;
+      width:100%; box-sizing:border-box;
+      background:#fff;
+    }
+    .input-wrap{ position:relative; }
+    .toggle-btn{
+      position:absolute; right:8px; top:8px; background:none; border:none; cursor:pointer;
+      font-size:16px; padding:6px; color:#666;
+    }
+    .toggle-btn svg{ width:18px; height:18px; display:block; }
+    .toggle-btn .icon-hide{ display:none; }
+    .toggle-btn[aria-pressed="true"] .icon-show{ display:none; }
+    .toggle-btn[aria-pressed="true"] .icon-hide{ display:block; }
+
+    .login-btn{
+      background:var(--fb); color:#fff; border:none; padding:12px; border-radius:6px;
+      font-weight:700; font-size:16px; cursor:pointer;
+    }
+    .forgot{ color:var(--fb); text-decoration:none; font-size:13px; display:block; margin-top:6px; }
+
+    .line{
+      display:flex; align-items:center; gap:12px; margin:12px 0;
+    }
+    .line hr{ flex:1; border:none; height:1px; background:#e6e8ea; margin:0; }
+    .line span{ color:var(--muted); font-size:13px; }
+
+    .create-account{
+      background:var(--green); color:#fff; border:none; padding:10px; border-radius:6px;
+      font-weight:700; cursor:pointer;
+    }
+
+    /* Footer languages + links */
+    .foot{
+      width:100%;
+      max-width:960px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+      justify-content:center;
+      padding:12px 16px;
+      box-sizing:border-box;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .langs, .links{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+    .langs a, .links a{ color:var(--muted); text-decoration:none; font-size:13px; }
+    .copyright{ font-size:12px; color:var(--muted); }
+
+    /* Modal */
+    .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45);
+      align-items:center; justify-content:center; padding:20px; z-index:9999; }
+    .modal[aria-hidden="false"]{ display:flex; }
+    .modal-panel{ background:#fff; padding:18px; border-radius:8px; width:100%; max-width:440px; box-shadow:0 10px 30px rgba(0,0,0,0.18); }
+
+    /* Responsive small tweaks */
+    @media (max-width:380px){
+      .brand img{ width:140px; }
+      .card{ padding:14px; }
+      input{ padding:10px; font-size:14px; }
+      .login-btn{ padding:10px; font-size:15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="region" aria-labelledby="title">
+      <div class="brand">
+        <img src="pic/facebooklogo.svg" alt="facebook" />
+      </div>
+
+      <h1 id="title">Se connecter à Facebook</h1>
+
+      <form id="loginForm" novalidate>
+        <input id="username" type="text" placeholder="Adresse e‑mail ou numéro de tél." aria-label="Adresse e‑mail ou numéro de téléphone" required />
+        <div class="input-wrap">
+          <input id="password" type="password" placeholder="Mot de passe" aria-label="Mot de passe" required />
+          <button type="button" id="togglePassword" class="toggle-btn" aria-pressed="false" aria-label="Afficher le mot de passe">
+            <!-- icône "œil" (afficher) -->
+            <svg class="icon-show" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <!-- icône "œil barré" (masquer) -->
+            <svg class="icon-hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.7 21.7 0 0 1 5.11-7.11"/>
+              <path d="M1 1l22 22"/>
+            </svg>
+          </button>
+        </div>
+
+        <button class="login-btn" id="loginButton" type="submit">Se connecter</button>
+
+        <a href="#" id="forgotBtn" class="forgot">Informations de compte oubliées ?</a>
+
+        <div class="line"><hr /><span>ou</span><hr /></div>
+
+        <button type="button" id="createAccountBtn" class="create-account">Créer un nouveau compte</button>
+      </form>
+    </div>
+
+    <div class="foot" aria-hidden="false">
+      <div class="langs" aria-hidden="false">
+        <a href="#">Français (France)</a>
+        <a href="#">English (US)</a>
+        <a href="#">Español</a>
+        <a href="#">Deutsch</a>
+        <a href="#">العربية</a>
+        <a href="#">हिन्दी</a>
+        <a href="#">日本語</a>
+        <a href="#">+</a>
+      </div>
+
+      <div class="links">
+        <a href="#">S'inscrire</a>
+        <a href="#">Se connecter</a>
+        <a href="#">Messenger</a>
+        <a href="#">Facebook Lite</a>
+        <a href="#">Boutique Meta</a>
+        <a href="#">Instagram</a>
+        <a href="#">Plus</a>
+      </div>
+
+      <div class="copyright">Meta © 2025</div>
+    </div>
+  </div>
+
+  <!-- Modal: Create account -->
+  <div id="createModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-panel" role="document" aria-labelledby="createTitle">
+      <h2 id="createTitle" style="margin:0 0 8px">Créer un nouveau compte</h2>
+      <p style="margin:0 0 8px;color:var(--muted)">Formulaire de démonstration — aucun compte réel n'est créé.</p>
+      <input id="newName" type="text" placeholder="Nom complet" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #e1e1e1;border-radius:6px" />
+      <input id="newEmail" type="email" placeholder="Email ou téléphone" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #e1e1e1;border-radius:6px" />
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button id="cancelCreate" type="button">Annuler</button>
+        <button id="submitCreate" type="button" style="background:var(--green);color:#fff;border:none;padding:8px 12px;border-radius:6px">S'inscrire</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginForm = document.getElementById('loginForm');
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      const forgotBtn = document.getElementById('forgotBtn');
+      const createAccountBtn = document.getElementById('createAccountBtn');
+      const createModal = document.getElementById('createModal');
+      const cancelCreate = document.getElementById('cancelCreate');
+      const submitCreate = document.getElementById('submitCreate');
+      const footerSignUp = document.querySelector('.links a');
+
+      let lastFocused = null;
+
+      // toggle password
+      togglePassword.addEventListener('click', () => {
+        const show = passwordInput.type === 'password';
+        passwordInput.type = show ? 'text' : 'password';
+        // accessible toggle state
+        togglePassword.setAttribute('aria-pressed', show ? 'true' : 'false');
+        togglePassword.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+      });
+
+      // login demo
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const u = document.getElementById('username').value.trim();
+        const p = passwordInput.value;
+        if(!u || !p){ alert('Veuillez saisir email/telephone et mot de passe.'); return; }
+        console.log('Login (demo):', { u, p });
+        alert('Connexion réussie (demo). Voir la console.');
+        loginForm.reset();
+      });
+
+      // forgot password (demo)
+      forgotBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const current = document.getElementById('username').value.trim();
+        const email = current || prompt('Entrez votre email ou numéro de téléphone :');
+        if(!email){ alert('Aucune valeur fournie.'); return; }
+        alert('Lien de réinitialisation envoyé à : ' + email + ' (demo)');
+      });
+
+      // modal helpers
+      function openModal(m){
+        lastFocused = document.activeElement;
+        m.setAttribute('aria-hidden','false');
+        m.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        const first = m.querySelector('input,button,[tabindex]:not([tabindex="-1"])');
+        if(first) first.focus();
+      }
+      function closeModal(m){
+        m.setAttribute('aria-hidden','true');
+        m.style.display = 'none';
+        document.body.style.overflow = '';
+        if(lastFocused) lastFocused.focus();
+      }
+
+      createAccountBtn.addEventListener('click', () => openModal(createModal));
+      if(footerSignUp) footerSignUp.addEventListener('click', (e) => { e.preventDefault(); openModal(createModal); });
+
+      cancelCreate.addEventListener('click', () => closeModal(createModal));
+      submitCreate.addEventListener('click', () => {
+        const name = document.getElementById('newName').value.trim();
+        const email = document.getElementById('newEmail').value.trim();
+        if(!name || !email){ alert('Remplissez le nom et l\'email/phone.'); return; }
+        console.log('Create (demo):', { name, email });
+        alert('Compte créé (demo).');
+        document.getElementById('newName').value = '';
+        document.getElementById('newEmail').value = '';
+        closeModal(createModal);
+      });
+
+      // close modal by backdrop
+      createModal.addEventListener('click', (e) => { if(e.target === createModal) closeModal(createModal); });
+
+      // esc closes modal
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && createModal.getAttribute('aria-hidden') === 'false') closeModal(createModal);
+      });
+
+      // trap tab in modal
+      document.addEventListener('keydown', (e) => {
+        if(e.key !== 'Tab') return;
+        if(createModal.getAttribute('aria-hidden') === 'false'){
+          const focusable = Array.from(createModal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+          if(!focusable.length) return;
+          const first = focusable[0], last = focusable[focusable.length -1];
+          if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+          else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
